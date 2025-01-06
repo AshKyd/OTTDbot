@@ -6,7 +6,7 @@ import { loopCleanCompanies } from "./src/loopCleanCompanies.mjs";
 
 let server = new OpenTTDAdmin();
 
-const PORT = process.env.PORT || 3977;
+const PORT = process.env.SERVER_ADMIN_PORT || 3977;
 
 function connect() {
   server.connect(process.env.SERVER, PORT);
