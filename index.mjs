@@ -6,8 +6,10 @@ import { loopCleanCompanies } from "./src/loopCleanCompanies.mjs";
 
 let server = new OpenTTDAdmin();
 
+const PORT = process.env.PORT || 3977;
+
 function connect() {
-  server.connect(process.env.SERVER, process.env.PORT || 3977);
+  server.connect(process.env.SERVER, PORT);
 }
 connect();
 
@@ -45,7 +47,9 @@ server.on("clienterror", function (client) {
 
 server.on("error", (error) => {
   if (error === "connectionclose") {
-    console.log("connection closed. Reconnecting in 5s.");
+    console.log(
+      "connection to ${process.env.SERVER}:${PORT} closed. Reconnecting in 5s."
+    );
     server.close();
     setTimeout(connect, 5000);
   } else {
