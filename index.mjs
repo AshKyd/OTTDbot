@@ -48,7 +48,7 @@ server.on("clienterror", function (client) {
 server.on("error", (error) => {
   if (error === "connectionclose") {
     console.log(
-      "connection to ${process.env.SERVER}:${PORT} closed. Reconnecting in 5s."
+      `connection to ${process.env.SERVER}:${PORT} closed. Reconnecting in 5s.`
     );
     server.close();
     setTimeout(connect, 5000);
