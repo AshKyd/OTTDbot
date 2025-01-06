@@ -1,0 +1,33 @@
+{
+  "game": {
+    "restartHourUTC": "05",
+    "idleCompanyAgeMinutes": 1
+  },
+  "welcomeMessage": [
+    "Welcome to Ash's test server.",
+    "Type !help or !rules for server info",
+    "Remember to set your company password"
+  ],
+  "textCommands": {
+    "!goal": [
+      "This is a free-for-all server. There is no goal other than to have fun."
+    ],
+    "!goals": [
+      "This is a free-for-all server. There is no goal other than to have fun."
+    ],
+    "!help": [
+      "!help - this menu",
+      "!rules - rules of the server",
+      "!reset - delete your company to free up a slot",
+      "!end - how much time until the game resets"
+    ],
+    "!rules": [
+      "House rules:",
+      "1. Be nice & respectful of other players",
+      "2. No blocking other players",
+      "3. Do not steal non-primary resources (goods, steel etc)",
+      "4. Do not abuse station spreading",
+      "But most of all have fun."
+    ]
+  }
+}
