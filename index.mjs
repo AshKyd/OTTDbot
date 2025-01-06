@@ -1,4 +1,3 @@
-import { addHours, formatDistance } from "date-fns";
 import config from "./config.json" assert { type: "json" };
 import { default as OpenTTDAdmin, enums } from "./src/openttdAdmin.mjs";
 import { getRestartTime, loopResetGame } from "./src/loopResetGame.mjs";
@@ -14,6 +13,7 @@ function connect() {
 connect();
 
 server.on("connect", function () {
+  π;
   server.authenticate("MyBot", process.env.PASSWORD);
 });
 server.on("welcome", function (data) {
