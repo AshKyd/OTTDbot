@@ -13,7 +13,6 @@ function connect() {
 connect();
 
 server.on("connect", function () {
-  π;
   server.authenticate("MyBot", process.env.PASSWORD);
 });
 server.on("welcome", function (data) {
