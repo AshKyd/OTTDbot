@@ -1,7 +1,7 @@
 {
   "game": {
     "restartHourUTC": "06",
-    "idleCompanyAgeMinutes": 1
+    "idleCompanyAgeMinutes": 240
   },
   "welcomeMessage": [
     "Welcome to the Oceanea server.",
