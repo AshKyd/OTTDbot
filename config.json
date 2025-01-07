@@ -1,10 +1,11 @@
 {
   "game": {
-    "restartHourUTC": "05",
+    "restartHourUTC": "06",
     "idleCompanyAgeMinutes": 1
   },
   "welcomeMessage": [
     "Welcome to the Oceanea server.",
+    "Server restarts daily at 16:00 AEST/+1000",
     "Type !help or !rules for server info"
   ],
   "textCommands": {
@@ -15,7 +16,8 @@
       "This is a free-for-all server. There is no goal other than to have fun."
     ],
     "!help": [
-      "Idle companies are cleared after 4 hours. Server resets at 4PM Australian EST.",
+      "Idle companies are cleared after 4 hours. Server resets daily at 16:00 AEST/+1000.",
+      "Commands:",
       "!help - this menu",
       "!rules - rules of the server",
       "!reset - delete your company to free up a slot",
