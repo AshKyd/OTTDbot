@@ -60,6 +60,10 @@ server.on("clientinfo", function ({ id, ip, name, lang, joindate, company }) {
   );
 });
 server.on("clientupdate", function (client) {
+  clientInfo[client.id] = {
+    ...clientInfo[client.id],
+    ...client,
+  };
   console.log(
     `client update: #${client.id} (${
       getClient(client.id).name
@@ -97,6 +101,7 @@ server.on("chat", function ({ action, desttype, id, message, money }) {
   );
 
   if (textCommandRespons) {
+    console.log(`command - responded to ${message} command`);
     textCommandRespons.forEach((line) => server.sayClient(id, line));
     return;
   }
