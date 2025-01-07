@@ -123,11 +123,15 @@ function getRelativeEnd(end) {
   return `${hrHours} hours, ${hrMinutes} minutes`;
 }
 
+let i = 0;
 async function loop() {
+  i++;
   console.log("- running loop");
   const args = { server };
 
-  await loopCleanCompanies(args);
+  if (i % 10 === 0) {
+    await loopCleanCompanies(args);
+  }
 
   await loopResetGame(args);
 
