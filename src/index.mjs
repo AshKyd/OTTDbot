@@ -1,7 +1,7 @@
-import config from "./config.json" assert { type: "json" };
-import { default as OpenTTDAdmin, enums } from "./src/openttdAdmin.mjs";
-import { getRestartTime, loopResetGame } from "./src/loopResetGame.mjs";
-import { loopCleanCompanies } from "./src/loopCleanCompanies.mjs";
+import config from "../config.json" assert { type: "json" };
+import { default as OpenTTDAdmin, enums } from "./openttdAdmin.mjs";
+import { getRestartTime, loopResetGame } from "./loopResetGame.mjs";
+import { loopCleanCompanies } from "./loopCleanCompanies.mjs";
 
 let server = new OpenTTDAdmin();
 
@@ -26,40 +26,75 @@ server.on("welcome", function (data) {
   setTimeout(loop, 1000);
 });
 
+const clientInfo = {};
+function getClient(id) {
+  return {
+    id: id,
+    name: "Unknown",
+    ip: "",
+    lang: "",
+    joinDate: 0,
+    company: 255,
+    ...clientInfo[id],
+  };
+}
+
 server.on("clientjoin", function (id) {
-  console.log("Client with id: ", id, " has joined the game.");
+  console.log("client", `Client with id: ${id} has joined the game.`);
   config.welcomeMessage.forEach((line) => server.sayClient(id, line));
 });
 
 server.on("clientinfo", function ({ id, ip, name, lang, joindate, company }) {
-  console.log("Info for client: ", { id, ip, name, lang, joindate, company });
+  clientInfo[id] = {
+    id,
+    ip,
+    name,
+    lang,
+    joindate,
+    company,
+  };
+  console.log(
+    `client info: #${id} (${getClient(id).name}) has new info: ${JSON.stringify(
+      clientInfo[id]
+    )}`
+  );
 });
 server.on("clientupdate", function (client) {
-  console.log("client updated: ", client);
+  console.log(
+    `client update: #${client.id} (${
+      getClient(client.id).name
+    }) has updated: ${JSON.stringify(client)}`
+  );
 });
 server.on("clientquit", function (id) {
-  console.log("Client with id: ", id, " has left the game.");
+  console.log(`client quit: #${id} (${getClient(id).name}) has quit`);
 });
 server.on("clienterror", function (client) {
-  console.log("Client with id: ", client.id, " has had an error: ", client.err);
+  console.log(
+    `client error: client #${client.id} (${
+      getClient(client.id).name
+    }) has had error: ${client.err}`
+  );
 });
 
 server.on("error", (error) => {
   if (error === "connectionclose") {
     console.log(
-      `connection to ${process.env.SERVER}:${PORT} closed. Reconnecting in 5s.`
+      `error: connection to ${process.env.SERVER}:${PORT} closed. Reconnecting in 5s.`
     );
     server.close();
     setTimeout(connect, 5000);
   } else {
-    console.error("caught error", error);
+    console.error("error: ", error);
   }
 });
 
 server.on("chat", function ({ action, desttype, id, message, money }) {
   const textCommandRespons = config.textCommands[message];
 
-  console.log("received chat", id, message);
+  console.log(
+    `chat (${desttype}): #${id}  (${getClient(id).name}): ${message}`
+  );
 
   if (textCommandRespons) {
     textCommandRespons.forEach((line) => server.sayClient(id, line));
@@ -67,12 +102,15 @@ server.on("chat", function ({ action, desttype, id, message, money }) {
   }
 
   if (message === "!reset") {
-    server.rcon("clients").then((clients) => {
+    server.rcon("clients").then(async (clients) => {
       const companyId = clients.find(
         (client) => client.id === Number(id)
       )?.company;
 
       if (!companyId || companyId === 255) {
+        console.log(
+          `command reset: user is not a member of a company to reset`
+        );
         return server.sayClient(
           id,
           "You need to be a member of a company before you can reset it."
@@ -82,17 +120,28 @@ server.on("chat", function ({ action, desttype, id, message, money }) {
         (client) => client.company === companyId
       ).length;
       if (clientsInCompany > 1) {
+        console.log(
+          `command reset: not resetting company with other members active`
+        );
         return server.sayClient(
           id,
           "There are other people in this company. You can only reset it after they leave."
         );
       }
-      server.rcon("move", `${id} 255`).then((res) => {
-        console.log("move response", res);
-        server.rcon("reset_company", companyId).then((lines) => {
-          console.log("company has been reset", lines);
-        });
-      });
+
+      try {
+        console.log(`command reset: resetting company ${companyId}`);
+        const move = await server.rcon("move", `${id} 255`);
+        const resetLines = await server.rcon("reset_company", companyId);
+
+        console.log(
+          `command - company has been reset - ${resetLines.join(" - ")}`
+        );
+      } catch (e) {
+        console.log(
+          `command reset: resetting company ${companyId} failed - e.message`
+        );
+      }
     });
 
     server.rcon("companies").then(console.log);
