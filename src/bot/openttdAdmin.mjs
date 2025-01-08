@@ -12,10 +12,17 @@ export default class OpenTTDAdmin extends libOpenttdAdmin {
     super();
   }
 
+  /**
+   * @param {string} message - message to broadcast publicly
+   */
   say(message) {
     this.send_rcon(`say ${rconEscape(message)}`);
   }
 
+  /**
+   * @param {number} id - recipient client for this message
+   * @param {string} message - message to send to the given user
+   */
   sayClient(id, message) {
     this.send_rcon(`say_client ${id} ${rconEscape(message)}`);
   }
@@ -23,7 +30,7 @@ export default class OpenTTDAdmin extends libOpenttdAdmin {
   #runCommand() {
     this.#isRunningCommand = true;
     const [command, args, resolve, reject] = this.commands.shift();
-    console.log(" - running command", command);
+    this.logger.info("running command - " + command);
 
     this.send_rcon([command, args].filter(Boolean).join(" "));
 
@@ -39,7 +46,7 @@ export default class OpenTTDAdmin extends libOpenttdAdmin {
       messages.push(output);
     }
 
-    function onEnd() {
+    const onEnd = () => {
       this.off("rcon", onMessage);
       this.off("rconend", onEnd);
       clearTimeout(timeout);
@@ -51,21 +58,21 @@ export default class OpenTTDAdmin extends libOpenttdAdmin {
         let res = parser ? parser(messages) : messages;
         resolve(res);
       }
-      console.log(" - finished command", command);
+      this.logger.info("finished command - " + command);
 
       if (this.commands.length) {
         this.#runCommand();
       } else {
         this.#isRunningCommand = false;
       }
-    }
+    };
     this.on("rcon", onMessage);
     this.once("rconend", onEnd);
   }
   /**
    * Run an rcon command and await the response.
-   * @params {string} command - command to run, e.g. reset_company
-   * @params {string=} args - arguments for this command, e.g. "2"
+   * @param {string} command - command to run, e.g. reset_company
+   * @param {string=} args - arguments for this command, e.g. "2"
    */
   rcon(command, args) {
     let resolve, reject;

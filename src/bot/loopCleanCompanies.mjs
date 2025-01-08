@@ -1,10 +1,9 @@
 import { formatDistance } from "date-fns";
-import config from "../config.json" assert { type: "json" };
 
 let companies = {};
 
 export async function loopCleanCompanies({ server }) {
-  const idleMinutes = config.game?.idleCompanyAgeMinutes;
+  const idleMinutes = server.config.game?.idleCompanyAgeMinutes;
   if (!idleMinutes) {
     console.log("not handling idle idleCompanyAgeMinutes");
     return;

@@ -1,14 +1,18 @@
 import { addHours } from "date-fns";
-import config from "../config.json" assert { type: "json" };
 
 let lastRestart = 0;
+/**
+ * @type string[]
+ */
 let warnings = [];
 function isWithin(value, lower, upper) {
   return value > lower && value < upper;
 }
 
-export function getRestartTime() {
-  const restartHourUTC = config.game.restartHourUTC;
+/**
+ * @param {number} restartHourUTC - the hour when the game server restarts
+ */
+export function getRestartTime(restartHourUTC) {
   const now = new Date();
   let restartDate = new Date(
     Date.UTC(
@@ -27,11 +31,15 @@ export function getRestartTime() {
 }
 
 const ONE_MINUTE = 1000 * 60;
+/**
+ * @param {object} config
+ * @param {object} config.server - Server instance
+ */
 export function loopResetGame({ server }) {
   if (Date.now() - lastRestart < ONE_MINUTE * 60) {
     return;
   }
-  const restartTime = getRestartTime();
+  const restartTime = getRestartTime(server.config.game.restartHourUTC);
   if (
     !warnings.includes("5min") &&
     isWithin(restartTime, ONE_MINUTE * 3, ONE_MINUTE * 5)

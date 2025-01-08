@@ -1,3 +1,4 @@
 node-openttd-admin-class
 node_modules
 .env
+*.txt
