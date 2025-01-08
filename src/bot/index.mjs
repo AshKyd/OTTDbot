@@ -3,25 +3,17 @@ import { getRestartTime, loopResetGame } from "./loopResetGame.mjs";
 import { loopCleanCompanies } from "./loopCleanCompanies.mjs";
 import logger from "../log.mjs";
 import { post } from "../mastodon/index.mjs";
+import geoip from "geoip-lite";
 
 let server = new OpenTTDAdmin();
 
 const PORT = process.env.SERVER_ADMIN_PORT || 3977;
 
-const clientInfo = {};
-
-async function refreshClients() {
-  const clients = await server.rcon("clients");
-  clients.forEach((client) => {
-    clientInfo[client.id] = client;
-  });
-}
-
 server.on("connect", function () {
   server.authenticate("MyBot", process.env.PASSWORD);
 });
 server.on("welcome", async function (data) {
-  await refreshClients();
+  await server.refreshClients();
 
   [enums.UpdateTypes.CLIENT_INFO, enums.UpdateTypes.CHAT].forEach(
     (updateType) =>
@@ -41,12 +33,12 @@ function getClient(id) {
     lang: "",
     joinDate: 0,
     company: 255,
-    ...clientInfo[id],
+    ...server.clients[id],
   };
 }
 
 server.on("clientjoin", async function (id) {
-  await refreshClients();
+  await server.refreshClients();
   const message = `client join: #${id} (${getClient(id).name}) has joined`;
   logger.info(message);
   server.config.welcomeMessage.forEach((line) => server.sayClient(id, line));
@@ -54,7 +46,8 @@ server.on("clientjoin", async function (id) {
 });
 
 server.on("clientinfo", function ({ id, ip, name, lang, joindate, company }) {
-  clientInfo[id] = {
+  server.clients[id] = {
+    ...server.clients[id],
     id,
     ip,
     name,
@@ -64,13 +57,13 @@ server.on("clientinfo", function ({ id, ip, name, lang, joindate, company }) {
   };
   logger.info(
     `client #${id} (${getClient(id).name}) has new info: ${JSON.stringify(
-      clientInfo[id]
+      server.clients[id]
     )}`
   );
 });
 server.on("clientupdate", function (client) {
-  clientInfo[client.id] = {
-    ...clientInfo[client.id],
+  server.clients[client.id] = {
+    ...server.clients[client.id],
     ...client,
   };
   logger.info(
@@ -80,13 +73,12 @@ server.on("clientupdate", function (client) {
   );
 });
 server.on("clientquit", function (client) {
-  console.log({ client });
   const message = `client quit: #${client.id} (${
     getClient(client.id).name
   }) has quit`;
   logger.info(message);
   post(message);
-  delete clientInfo[client.id];
+  delete server.clients[client.id];
 });
 server.on("clienterror", function (client) {
   if (client.err === 3) {

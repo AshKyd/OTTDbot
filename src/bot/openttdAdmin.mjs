@@ -1,5 +1,6 @@
 import { connection as libOpenttdAdmin, enums } from "node-openttd-admin-class";
 import * as rconParsers from "./rconParsers.mjs";
+import geoip from "geoip-lite";
 
 function rconEscape(string) {
   return `"${string.replace(/"/g, `'`)}"`;
@@ -7,6 +8,7 @@ function rconEscape(string) {
 
 export default class OpenTTDAdmin extends libOpenttdAdmin {
   commands = [];
+  clients = {};
   #isRunningCommand = false;
   constructor() {
     super();
@@ -85,6 +87,18 @@ export default class OpenTTDAdmin extends libOpenttdAdmin {
       this.#runCommand();
     }
     return p;
+  }
+
+  async refreshClients() {
+    const clients = await this.rcon("clients");
+    clients.forEach((client) => {
+      const lookup = geoip.lookup(client.ip);
+      const thisClientInfo = {
+        ...client,
+        geo: client.ip !== "server" ? lookup?.country || "unknown" : "server",
+      };
+      this.clients[client.id] = thisClientInfo;
+    });
   }
 }
 

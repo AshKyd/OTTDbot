@@ -15,6 +15,7 @@
     "date-fns": "^4.1.0",
     "express": "^4.21.2",
     "express-basic-auth": "^1.2.1",
+    "geoip-lite": "^1.4.10",
     "masto": "^6.10.1",
     "node-openttd-admin-class": "^0.2.5",
     "promise-socket": "^6.0.3",
