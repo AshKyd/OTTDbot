@@ -10,10 +10,10 @@
   ],
   "textCommands": {
     "!goal": [
-      "This is a free-for-all server. There is no goal other than to have fun."
+      "This is a free-for-all server, there is no goal. Make some money, grow some cities, transport the most cargo, you decide!"
     ],
     "!goals": [
-      "This is a free-for-all server. There is no goal other than to have fun."
+      "This is a free-for-all server, there is no goal. Make some money, grow some cities, transport the most cargo, you decide!"
     ],
     "!help": [
       "Idle companies are cleared after 1 hour. Server resets daily at 16:00 AEST/+1000.",
