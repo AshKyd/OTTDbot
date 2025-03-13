@@ -2,3 +2,5 @@ node-openttd-admin-class
 node_modules
 .env
 *.txt
+go.sh
+go.sh

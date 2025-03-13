@@ -18,8 +18,11 @@ export default function startServer({ botServer }) {
     res.send(`hi`);
   });
   app.get("/clients", async (req, res) => {
-    const clients = await botServer.refreshClients();
+    await botServer.refreshClients();
     res.json(botServer.clients);
+  });
+  app.get("/afk", async (req, res) => {
+    res.json(botServer.afk);
   });
   app.get("/clients/moderation/:action/:clientId", async (req, res) => {
     const { action, clientId } = req.params;

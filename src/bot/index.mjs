@@ -94,6 +94,7 @@ server.on("clienterror", function (client) {
 });
 
 function connect() {
+  logger.info(`connecting to ${process.env.SERVER}:${PORT}`);
   server.connect(process.env.SERVER, PORT);
 }
 server.on("error", (error) => {
@@ -193,7 +194,7 @@ server.on("chat", async function ({ action, desttype, id, message, money }) {
     return;
   }
 
-  await afk({ message, id, server });
+  await afk({ message, id, server, isPrivate });
 });
 
 /**

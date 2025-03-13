@@ -6,7 +6,7 @@ let companies = {};
 export async function loopCleanCompanies({ server }) {
   const idleMinutes = server.config.game?.idleCompanyAgeMinutes;
   if (!idleMinutes) {
-    console.log("not handling idle idleCompanyAgeMinutes");
+    logger.info("not handling idle idleCompanyAgeMinutes");
     return;
   }
   const resCompanies = await server.rcon("companies");
@@ -25,13 +25,14 @@ export async function loopCleanCompanies({ server }) {
 
     if (lastPopulated < Date.now() - idleMinutes * 60 * 1000) {
       const afkTime = server.afk?.[company.id];
-      if (afkTime && afkTime < Date.now()) {
+      if (afkTime) {
         logger.info(
-          `company ${existingCompany.name} is AFK until ${formatDistance(
+          `company ${existingCompany.name} is AFK for ${formatDistance(
             new Date(),
             new Date(afkTime)
-          )}`
+          )} and won't be cleared`
         );
+        return;
       }
 
       const timeAgoFormatted = formatDistance(
