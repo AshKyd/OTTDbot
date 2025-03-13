@@ -16,6 +16,7 @@ export function cleanAfk(server) {
 export default async function afk({ message, id, server, isPrivate }) {
   const client = server.clients[id];
   if (message === "!back") {
+    logger.log(`${client.name} is back, removing afk`);
     delete server.afk?.[client.company];
     server.say(`Welcome back, ${client.name}`);
     return;
@@ -29,19 +30,18 @@ export default async function afk({ message, id, server, isPrivate }) {
 
   if (message === "!afk") {
     cleanAfk(server);
-
+    const resCompanies = await server.rcon("companies");
     server.sayClient(
       id,
       `Set yourself away with "!afk <time>", betwen 1m and 9h. Use "!back" when you come back. AFK companies will not be cleared.`
     );
-    const resCompanies = await server.rcon("companies");
     Object.entries(server.afk).forEach(([companyId, afkTime]) => {
       const company = resCompanies.find(
-        (thisCompany) => thisCompany.id === Number(companyId)
+        (thisCompany) => thisCompany?.id === Number(companyId)
       );
       server.sayClient(
         id,
-        `${company.name} is AFK and will be back in ${formatDistance(
+        `${company.name} - back in ${formatDistance(
           new Date(),
           new Date(afkTime)
         )}`
@@ -72,7 +72,7 @@ export default async function afk({ message, id, server, isPrivate }) {
     ""
   );
   server.say(
-    `${client.name} has will be AFK for ${timeRelative}. Their company will not be cleared.`
+    `${client.name} will be !afk for ${timeRelative}. Their company will not be cleared.`
   );
   logger.info(
     `${client.name} set company ${client.company} AFK for ${timeRelative}`

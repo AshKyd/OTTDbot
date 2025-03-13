@@ -1,9 +1,11 @@
 import { formatDistance } from "date-fns";
 import logger from "../log.mjs";
+import { cleanAfk } from "./commands/afk.mjs";
 
 let companies = {};
 
 export async function loopCleanCompanies({ server }) {
+  cleanAfk(server);
   const idleMinutes = server.config.game?.idleCompanyAgeMinutes;
   if (!idleMinutes) {
     logger.info("not handling idle idleCompanyAgeMinutes");
