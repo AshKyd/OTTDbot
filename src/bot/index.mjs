@@ -4,6 +4,7 @@ import { loopCleanCompanies } from "./loopCleanCompanies.mjs";
 import logger from "../log.mjs";
 import { post } from "../mastodon/index.mjs";
 import geoip from "geoip-lite";
+import afk from "./commands/afk.mjs";
 
 let server = new OpenTTDAdmin();
 
@@ -93,6 +94,7 @@ server.on("clienterror", function (client) {
 });
 
 function connect() {
+  logger.info(`connecting to ${process.env.SERVER}:${PORT}`);
   server.connect(process.env.SERVER, PORT);
 }
 server.on("error", (error) => {
@@ -107,9 +109,8 @@ server.on("error", (error) => {
   }
 });
 
-server.on("chat", function ({ action, desttype, id, message, money }) {
+server.on("chat", async function ({ action, desttype, id, message, money }) {
   const isPrivate = desttype !== enums.DestTypes.BROADCAST;
-  const isTextCommand = message.match(/^!/);
 
   const textCommandResponse = server.config.textCommands[message];
 
@@ -192,6 +193,8 @@ server.on("chat", function ({ action, desttype, id, message, money }) {
 
     return;
   }
+
+  await afk({ message, id, server, isPrivate });
 });
 
 /**

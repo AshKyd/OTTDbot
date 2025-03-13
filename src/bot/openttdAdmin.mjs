@@ -94,6 +94,7 @@ export default class OpenTTDAdmin extends libOpenttdAdmin {
     clients.forEach((client) => {
       const lookup = geoip.lookup(client.ip);
       const thisClientInfo = {
+        ...this.clients[client.id],
         ...client,
         geo: client.ip !== "server" ? lookup?.country || "unknown" : "server",
       };

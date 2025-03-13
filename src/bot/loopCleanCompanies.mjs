@@ -1,11 +1,12 @@
 import { formatDistance } from "date-fns";
+import logger from "../log.mjs";
 
 let companies = {};
 
 export async function loopCleanCompanies({ server }) {
   const idleMinutes = server.config.game?.idleCompanyAgeMinutes;
   if (!idleMinutes) {
-    console.log("not handling idle idleCompanyAgeMinutes");
+    logger.info("not handling idle idleCompanyAgeMinutes");
     return;
   }
   const resCompanies = await server.rcon("companies");
@@ -13,6 +14,7 @@ export async function loopCleanCompanies({ server }) {
   const newCompanies = {};
   resCompanies.forEach((company) => {
     const existingCompany = companies[company.id];
+
     const isPopulated = resClients.some(
       (client) => client.company === company.id
     );
@@ -22,6 +24,17 @@ export async function loopCleanCompanies({ server }) {
       : existingCompany?.lastPopulated || Date.now();
 
     if (lastPopulated < Date.now() - idleMinutes * 60 * 1000) {
+      const afkTime = server.afk?.[company.id];
+      if (afkTime) {
+        logger.info(
+          `company ${existingCompany.name} is AFK for ${formatDistance(
+            new Date(),
+            new Date(afkTime)
+          )} and won't be cleared`
+        );
+        return;
+      }
+
       const timeAgoFormatted = formatDistance(
         new Date(lastPopulated),
         new Date()
