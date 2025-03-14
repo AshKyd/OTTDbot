@@ -2,7 +2,7 @@ import logger from "../../log.mjs";
 import { formatDistance } from "date-fns";
 
 export function cleanAfk(server) {
-  server.afk = Object.entries(server.afk || {}).reduce(
+  server.state.afk = Object.entries(server.state.afk || {}).reduce(
     (obj, [companyId, time]) => {
       if (time >= Date.now()) {
         obj[companyId] = time;
@@ -17,7 +17,7 @@ export default async function afk({ message, id, server, isPrivate }) {
   const client = server.clients[id];
   if (message === "!back") {
     logger.log(`${client.name} is back, removing afk`);
-    delete server.afk?.[client.company];
+    delete server.state.afk?.[client.company];
     server.say(`Welcome back, ${client.name}`);
     return;
   }
@@ -35,7 +35,7 @@ export default async function afk({ message, id, server, isPrivate }) {
       id,
       `Set yourself away with "!afk <time>", betwen 1m and 9h. Use "!back" when you come back. AFK companies will not be cleared.`
     );
-    Object.entries(server.afk).forEach(([companyId, afkTime]) => {
+    Object.entries(server.state.afk).forEach(([companyId, afkTime]) => {
       const company = resCompanies.find(
         (thisCompany) => thisCompany?.id === Number(companyId)
       );
@@ -54,7 +54,7 @@ export default async function afk({ message, id, server, isPrivate }) {
       );
     });
 
-    if (!Object.keys(server.afk).length) {
+    if (!Object.keys(server.state.afk).length) {
       server.sayClient(id, "No companies are AFK.");
     }
     return;
@@ -69,8 +69,8 @@ export default async function afk({ message, id, server, isPrivate }) {
     return;
   }
   const afkTime = Date.now() + distance;
-  server.afk = {
-    ...server.afk,
+  server.state.afk = {
+    ...server.state.afk,
     [client.company]: afkTime,
   };
   const timeRelative = formatDistance(new Date(), new Date(afkTime)).replace(
@@ -83,4 +83,5 @@ export default async function afk({ message, id, server, isPrivate }) {
   logger.info(
     `${client.name} set company ${client.company} AFK for ${timeRelative}`
   );
+  server.syncState();
 }

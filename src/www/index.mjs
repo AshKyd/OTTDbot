@@ -22,7 +22,7 @@ export default function startServer({ botServer }) {
     res.json(botServer.clients);
   });
   app.get("/afk", async (req, res) => {
-    res.json(botServer.afk);
+    res.json(botServer.state.afk);
   });
   app.get("/clients/moderation/:action/:clientId", async (req, res) => {
     const { action, clientId } = req.params;

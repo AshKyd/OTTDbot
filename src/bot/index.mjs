@@ -87,6 +87,7 @@ server.on("clienterror", function (client) {
     // standard quit error.
     return;
   }
+  delete server.clients[client.id];
   logger.info(
     `client error: client #${client.id} (${
       getClient(client.id).name

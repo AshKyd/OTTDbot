@@ -1,6 +1,8 @@
 import { connection as libOpenttdAdmin, enums } from "node-openttd-admin-class";
 import * as rconParsers from "./rconParsers.mjs";
+import fs from "fs";
 import geoip from "geoip-lite";
+import logger from "../log.mjs";
 
 function rconEscape(string) {
   return `"${string.replace(/"/g, `'`)}"`;
@@ -9,9 +11,19 @@ function rconEscape(string) {
 export default class OpenTTDAdmin extends libOpenttdAdmin {
   commands = [];
   clients = {};
+  state = {};
   #isRunningCommand = false;
   constructor() {
     super();
+    try {
+      const { state, clients } = JSON.parse(
+        fs.readFileSync(process.env.CONFIG_PATH || "state.json")
+      );
+      this.clients = clients || {};
+      this.state = state || {};
+    } catch (e) {
+      logger.error("Could not load state: " + e.message);
+    }
   }
 
   /**
@@ -100,6 +112,21 @@ export default class OpenTTDAdmin extends libOpenttdAdmin {
       };
       this.clients[client.id] = thisClientInfo;
     });
+    this.syncState();
+  }
+
+  syncState() {
+    try {
+      fs.writeFileSync(
+        process.env.CONFIG_PATH || "state.json",
+        JSON.stringify({
+          state: this.state,
+          clients: this.clients,
+        })
+      );
+    } catch (e) {
+      logger.error("Could not write state: " + e.message);
+    }
   }
 }
 

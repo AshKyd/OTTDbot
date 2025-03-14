@@ -2,23 +2,7 @@ import winston from "winston";
 
 export const LOG_FILE = "/tmp/combined.log";
 
-const myCustomLevels = {
-  levels: {
-    chat: 0,
-    info: 1,
-    warn: 2,
-    error: 3,
-  },
-  colors: {
-    chat: "blue",
-    info: "yellow",
-    warn: "purple",
-    error: "red",
-  },
-};
-
 const logger = winston.createLogger({
-  levels: myCustomLevels.levels,
   level: "info",
   format: winston.format.simple(),
   defaultMeta: { service: "user-service" },
@@ -39,6 +23,5 @@ const logger = winston.createLogger({
     }),
   ],
 });
-winston.addColors(myCustomLevels.colors);
 
 export default logger;

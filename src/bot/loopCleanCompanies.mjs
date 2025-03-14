@@ -26,7 +26,7 @@ export async function loopCleanCompanies({ server }) {
       : existingCompany?.lastPopulated || Date.now();
 
     if (lastPopulated < Date.now() - idleMinutes * 60 * 1000) {
-      const afkTime = server.afk?.[company.id];
+      const afkTime = server.state.afk?.[company.id];
       if (afkTime) {
         logger.info(
           `company ${existingCompany.name} is AFK for ${formatDistance(

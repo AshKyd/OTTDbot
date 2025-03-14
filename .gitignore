@@ -4,3 +4,4 @@ node_modules
 *.txt
 go.sh
 go.sh
+state.json
