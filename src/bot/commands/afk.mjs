@@ -39,6 +39,12 @@ export default async function afk({ message, id, server, isPrivate }) {
       const company = resCompanies.find(
         (thisCompany) => thisCompany?.id === Number(companyId)
       );
+      if (!company) {
+        logger.error(
+          `Company ${companyId} exists in AFK but not in company list`
+        );
+        return;
+      }
       server.sayClient(
         id,
         `${company.name} - back in ${formatDistance(

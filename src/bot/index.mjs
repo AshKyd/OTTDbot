@@ -5,6 +5,7 @@ import logger from "../log.mjs";
 import { post } from "../mastodon/index.mjs";
 import geoip from "geoip-lite";
 import afk from "./commands/afk.mjs";
+import gameinfo from "./commands/gameinfo.mjs";
 
 let server = new OpenTTDAdmin();
 
@@ -194,7 +195,13 @@ server.on("chat", async function ({ action, desttype, id, message, money }) {
     return;
   }
 
-  await afk({ message, id, server, isPrivate });
+  await afk({ message, id, server, isPrivate }).catch((e) =>
+    logger.error("!afk crashed", e)
+  );
+
+  await gameinfo({ message, id, server, isPrivate }).catch((e) =>
+    logger.error("!gameinfo crashed", e)
+  );
 });
 
 /**

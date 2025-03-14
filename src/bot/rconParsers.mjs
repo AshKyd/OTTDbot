@@ -1,3 +1,5 @@
+import logger from "../log.mjs";
+
 function parseCompanyLine(line) {
   const [
     ,
@@ -76,4 +78,15 @@ export function reset_company(lines) {
 
 export function move(lines) {
   return { success: lines?.[0]?.includes("has joined") };
+}
+
+export function setting(lines) {
+  // E.g. Current value for 'vehicle.max_trains' is '1500' (min: 0, max: 5000).
+  const match = lines[0].match(/Current value for '[^']+' is '([^']*)'/);
+  console.log(lines[0], match);
+  if (!match) {
+    logger.error("Could not parse setting from line", lines);
+    return null;
+  }
+  return match[1];
 }
