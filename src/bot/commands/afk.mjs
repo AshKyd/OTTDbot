@@ -16,7 +16,10 @@ export function cleanAfk(server) {
 export default async function afk({ message, id, server, isPrivate }) {
   const client = server.clients[id];
   if (message === "!back") {
-    logger.log(`${client.name} is back, removing afk`);
+    logger.log({
+      level: "info",
+      message: `${client.name} is back, removing afk`,
+    });
     delete server.state.afk?.[client.company];
     server.say(`Welcome back, ${client.name}`);
     return;

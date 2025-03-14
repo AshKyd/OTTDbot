@@ -121,7 +121,7 @@ server.on("chat", async function ({ action, desttype, id, message, money }) {
   } (#${id}): “${message}”${money ? ` (${money} money)` : ""}`;
 
   logger.log({
-    level: "chat",
+    level: "info",
     message: messageLog,
   });
 
