@@ -18,11 +18,10 @@
     "!help": [
       "Idle companies are cleared after 4 hours. Server resets daily at 16:00 AEST/+1000.",
       "Commands:",
-      "!help - this menu",
-      "!rules - rules of the server",
-      "!reset - delete your company to free up a slot",
-      "!end - how much time until the game resets",
-      "!afk - see who's away from the keyboard, and how to use the feature"
+      "!help, !rules, !gameinfo - server info",
+      "!reset - delete your company to free a slot",
+      "!end - see when the game resets",
+      "!afk - see who's AFK"
     ],
     "!rules": [
       "House rules:",
