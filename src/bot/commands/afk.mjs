@@ -36,7 +36,7 @@ export default async function afk({ message, id, server, isPrivate }) {
     const resCompanies = await server.rcon("companies");
     server.sayClient(
       id,
-      `Set yourself away with "!afk <time>", betwen 1m and 9h. Use "!back" when you come back. AFK companies will not be cleared.`
+      `Set yourself away with "!afk <time>", betwen 1m and 11h. Use "!back" when you come back. AFK companies will not be cleared.`
     );
     Object.entries(server.state.afk).forEach(([companyId, afkTime]) => {
       const company = resCompanies.find(
@@ -63,11 +63,11 @@ export default async function afk({ message, id, server, isPrivate }) {
     return;
   }
   const distance = time * 1000 * 60 * (units === "h" ? 60 : 1);
-  const EIGHT_HOURS = 1000 * 60 * 60 * 9;
+  const EIGHT_HOURS = 1000 * 60 * 60 * 11;
   if (distance > EIGHT_HOURS) {
     server.sayClient(
       id,
-      "The maximum AFK time is 9 hours, please try a lower time."
+      "The maximum AFK time is 11 hours, please try a lower time."
     );
     return;
   }
