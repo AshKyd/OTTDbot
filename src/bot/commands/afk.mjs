@@ -68,6 +68,7 @@ export default async function afk({ message, id, server, isPrivate }) {
       id,
       "You aren't a member of a company, so you can't go AFK."
     );
+    return;
   }
 
   const distance = time * 1000 * 60 * (units === "h" ? 60 : 1);
