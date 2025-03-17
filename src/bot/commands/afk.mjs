@@ -62,6 +62,14 @@ export default async function afk({ message, id, server, isPrivate }) {
     }
     return;
   }
+
+  if (client.company === 255) {
+    server.sayClient(
+      id,
+      "You aren't a member of a company, so you can't go AFK."
+    );
+  }
+
   const distance = time * 1000 * 60 * (units === "h" ? 60 : 1);
   const EIGHT_HOURS = 1000 * 60 * 60 * 11;
   if (distance > EIGHT_HOURS) {
