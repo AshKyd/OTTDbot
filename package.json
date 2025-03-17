@@ -12,6 +12,7 @@
   "dependencies": {
     "binary": "^0.3.0",
     "buffers": "^0.1.1",
+    "cors": "^2.8.5",
     "date-fns": "^4.1.0",
     "express": "^4.21.2",
     "express-basic-auth": "^1.2.1",

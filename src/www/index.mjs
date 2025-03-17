@@ -1,10 +1,13 @@
 import express from "express";
 import basicAuth from "express-basic-auth";
 import fs from "fs";
+import cors from "cors";
 import logger, { LOG_FILE } from "../log.mjs";
 
 export default function startServer({ botServer }) {
   const app = express();
+
+  app.use(cors());
 
   app.use(
     basicAuth({
@@ -51,7 +54,7 @@ export default function startServer({ botServer }) {
   app.listen(port, () => {
     logger.log({
       level: "info",
-      message: `Example app listening on port ${port}`,
+      message: `App listening on port ${port}`,
     });
   });
 }
