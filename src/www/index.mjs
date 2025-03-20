@@ -41,6 +41,21 @@ export default function startServer({ botServer }) {
     const rconResponse = await botServer.rcon(`${action} "${sanitisedId}"`);
     res.json({ status: rconResponse });
   });
+  app.get("/clients/moderation/rename/:clientId/:newName", async (req, res) => {
+    const { action, clientId, newName } = req.params;
+    const sanitisedId = Number(clientId);
+    if (isNaN(sanitisedId) || sanitisedId < 1) {
+      return res.json({ error: "invalid clientId" });
+    }
+    if (!newName.match(/^[a-zA-Z]+$/)) {
+      return res.json({ error: "Invalid username. Alpha characters only." });
+    }
+
+    const rconResponse = await botServer.rcon(
+      `client_name "${sanitisedId}" "${newName}"`
+    );
+    res.json({ status: rconResponse });
+  });
   app.get("/companies", async (req, res) => {
     const companies = await botServer.rcon("companies");
     res.json(companies);
