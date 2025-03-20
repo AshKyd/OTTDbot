@@ -30,7 +30,7 @@ export default class OpenTTDAdmin extends libOpenttdAdmin {
    * @param {string} message - message to broadcast publicly
    */
   say(message) {
-    this.send_rcon(`say ${rconEscape(message)}`);
+    return this.rcon("say", `${rconEscape(message)}`);
   }
 
   /**
@@ -38,7 +38,7 @@ export default class OpenTTDAdmin extends libOpenttdAdmin {
    * @param {string} message - message to send to the given user
    */
   sayClient(id, message) {
-    this.send_rcon(`say_client ${id} ${rconEscape(message)}`);
+    return this.rcon("say_client", `${id} ${rconEscape(message)}`);
   }
 
   #runCommand() {

@@ -59,6 +59,14 @@ export default function startServer({ botServer }) {
     );
     res.json({ status: rconResponse });
   });
+  app.get("/say/client/:id", async (req, res) => {
+    const botRes = await botServer.sayClient(req.params.id, req.query.message);
+    res.json({ status: botRes.length === 1 });
+  });
+  app.get("/say/broadcast", async (req, res) => {
+    const botRes = await botServer.say(req.query.message);
+    res.json({ status: botRes.length === 1 });
+  });
   app.get("/companies", async (req, res) => {
     const companies = await botServer.rcon("companies");
     res.json(companies);
