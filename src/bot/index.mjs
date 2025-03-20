@@ -200,7 +200,7 @@ server.on("chat", async function ({ action, desttype, id, message, money }) {
     logger.error("!afk crashed", e)
   );
 
-  await gameinfo({ message, id, server, isPrivate }).catch((e) =>
+  await gameinfo({ message, server }).catch((e) =>
     logger.error("!gameinfo crashed", e)
   );
 });
@@ -229,6 +229,7 @@ async function loop() {
   const args = { server };
 
   if (i % 10 === 0) {
+    await server.refreshClients();
     await loopCleanCompanies(args);
   }
 

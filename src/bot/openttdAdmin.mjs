@@ -103,15 +103,17 @@ export default class OpenTTDAdmin extends libOpenttdAdmin {
 
   async refreshClients() {
     const clients = await this.rcon("clients");
+    const newClients = {};
     clients.forEach((client) => {
       const lookup = geoip.lookup(client.ip);
       const thisClientInfo = {
-        ...this.clients[client.id],
+        ...newClients[client.id],
         ...client,
         geo: client.ip !== "server" ? lookup?.country || "unknown" : "server",
       };
-      this.clients[client.id] = thisClientInfo;
+      newClients[client.id] = thisClientInfo;
     });
+    this.clients = newClients;
     this.syncState();
   }
 
