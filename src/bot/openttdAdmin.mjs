@@ -117,6 +117,24 @@ export default class OpenTTDAdmin extends libOpenttdAdmin {
     this.syncState();
   }
 
+  async deleteCompany(companyId) {
+    const clients = await this.rcon("clients");
+
+    await Promise.all(
+      clients.map((client) => {
+        if (client.company === companyId) {
+          logger.info(
+            `removing client ${client.name} (#${client.id}) from company ${companyId}`
+          );
+          return this.rcon("move", `${client.id} 255`);
+        }
+      })
+    );
+
+    console.info(`resetting company ${companyId}`);
+    return this.rcon("reset_company", companyId);
+  }
+
   syncState() {
     try {
       fs.writeFileSync(

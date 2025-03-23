@@ -41,6 +41,14 @@ export default function startServer({ botServer }) {
     const rconResponse = await botServer.rcon(`${action} "${sanitisedId}"`);
     res.json({ status: rconResponse });
   });
+  app.get("/companies/moderation/delete/:companyId", async (req, res) => {
+    const sanitisedId = Number(req.params.companyId);
+    if (isNaN(sanitisedId) || sanitisedId < 1) {
+      return res.json({ error: "invalid companyId" });
+    }
+    const rconResponse = await botServer.deleteCompany(sanitisedId);
+    res.json({ status: rconResponse });
+  });
   app.get("/clients/moderation/rename/:clientId/:newName", async (req, res) => {
     const { clientId, newName = "" } = req.params;
     const sanitisedId = Number(clientId);
